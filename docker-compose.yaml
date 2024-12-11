@@ -1,0 +1,36 @@
+version: '3'
+services:
+  app:
+    image: spring-ai-app:latest
+    environment:
+      OTEL_SERVICE_NAME: "agent-example-app"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      OTEL_LOGS_EXPORTER: "otlp"
+#      OTEL_EXPERIMENTAL_CONFIG_FILE: "/sdk-config.yaml"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+    ports:
+      - "8080:8080"
+#    volumes:
+#      - ./sdk-config.yaml:/sdk-config.yaml
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    command: ["--config=/etc/collector-config.yaml"]
+    volumes:
+      - ./collector-config.yaml:/etc/collector-config.yaml
+    ports:
+      - "13133:13133"
+      - "4317:4317"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.64.0
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250:14250"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
