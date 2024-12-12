@@ -6,12 +6,9 @@ services:
       OTEL_SERVICE_NAME: "agent-example-app"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
       OTEL_LOGS_EXPORTER: "otlp"
-#      OTEL_EXPERIMENTAL_CONFIG_FILE: "/sdk-config.yaml"
       OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
     ports:
       - "8080:8080"
-#    volumes:
-#      - ./sdk-config.yaml:/sdk-config.yaml
     depends_on:
       - otel-collector
 
